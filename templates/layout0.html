@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Creative - Bootstrap 3 Responsive Admin Template">
+  <meta name="author" content="GeeksLabs">
+  <meta name="keyword" content="Creative, Dashboard, Admin, Template, Theme, Bootstrap, Responsive, Retina, Minimal">
+  <link rel="shortcut icon" href="{{ url_for('static',filename='img/favicon.png') }}">
+
+  <title>{% block title %}{% endblock %}</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet">
+  <!-- bootstrap theme -->
+  <link href="{{ url_for('static',filename='css/bootstrap-theme.css') }}" rel="stylesheet">
+  <!--external css-->
+  <!-- font icon -->
+  <link href="{{ url_for('static',filename='css/elegant-icons-style.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static',filename='css/font-awesome.min.css') }}" rel="stylesheet" />
+  <!-- Custom styles -->
+  <link href="{{ url_for('static',filename='css/style.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static',filename='css/style-responsive.css') }}" rel="stylesheet" />
+
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 -->
+  <!--[if lt IE 9]>
+      <script src="{{ url_for('static',filename='js/html5shiv.js') }}"></script>
+      <script src="{{ url_for('static',filename='js/respond.min.js') }}"></script>
+      <script src="{{ url_for('static',filename='js/lte-ie7.js') }}"></script>
+    <![endif]-->
+
+    <!-- =======================================================
+      Theme Name: NiceAdmin
+      Theme URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+      Author: BootstrapMade
+      Author URL: https://bootstrapmade.com
+    ======================================================= -->
+</head>
+
+<body>
+  <!-- container section start -->
+  <section id="container" class="">
+    <!--header start-->
+
+    <header class="header dark-bg">
+      <div class="toggle-nav">
+        <div class="icon-reorder tooltips" data-original-title="Toggle Navigation" data-placement="bottom"><i class="icon_menu"></i></div>
+      </div>
+
+      <!--logo start-->
+      <a href="" class="logo">Nice <span class="lite">Admin</span></a>
+      <!--logo end-->
+
+      <div class="nav search-row" id="top_menu">
+        <!--  search form start -->
+        <ul class="nav top-menu">
+          <li>
+            <form class="navbar-form">
+              <input class="form-control" placeholder="Search" type="text">
+            </form>
+          </li>
+        </ul>
+        <!--  search form end -->
+      </div>
+
+      <div class="top-nav notification-row">
+        <!-- notificatoin dropdown start-->
+        <ul class="nav pull-right top-menu">
+
+          <!-- task notificatoin start -->
+            <li id="task_notificatoin_bar" class="dropdown">
+            <a href="{{ url_for('index') }}">
+                            <i class="icon_house"></i>
+                            <span class="">Home</span>
+                        </a>
+
+          </li>
+          <li id="task_notificatoin_bar" class="dropdown">
+            <a href="{{ url_for('login') }}">
+                            <i class="icon_lock-open"></i>
+                            <span class="">Login</span>
+                        </a>
+
+          </li>
+            <li id="task_notificatoin_bar" class="dropdown">
+            <a href="{{ url_for('sign_in') }}">
+                            <i class="icon_profile"></i>
+                            <span class="">Sign-in</span>
+            </a>
+
+          </li>
+          <!-- task notificatoin end -->
+          <!-- inbox notificatoin start-->
+          <!-- inbox notificatoin end -->
+          <!-- alert notification start-->
+        </ul>
+        <!-- notificatoin dropdown end-->
+      </div>
+    </header>
+    <!--header end-->
+
+    <!--sidebar start-->
+        <!--sidebar end-->
+
+    <!--main content start-->
+
+
+    <section class="wrapper">
+        <!-- page start-->
+          {% block content %}
+
+          {% endblock %}
+        <!-- page end-->
+
+    </section>
+    <!--main content end-->
+
+  </section>
+  <!-- container section end -->
+  <!-- javascripts -->
+ <script src="{{ url_for('static',filename='js/jquery.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
+  <!-- nice scroll -->
+  <script src="{{ url_for('static',filename='js/jquery.scrollTo.min.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/jquery.nicescroll.js') }}" type="text/javascript"></script>
+
+  <!-- jquery ui -->
+  <script src="{{ url_for('static',filename='js/jquery-ui-1.9.2.custom.min.js') }}"></script>
+
+  <!--custom checkbox & radio-->
+  <script type="text/javascript" src="{{ url_for('static',filename='js/ga.js') }}"></script>
+  <!--custom switch-->
+  <script src="{{ url_for('static',filename='js/bootstrap-switch.js') }}"></script>
+  <!--custom tagsinput-->
+  <script src="{{ url_for('static',filename='js/jquery.tagsinput.js') }}"></script>
+
+  <!-- colorpicker -->
+
+  <!-- bootstrap-wysiwyg -->
+  <script src="{{ url_for('static',filename='js/jquery.hotkeys.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/bootstrap-wysiwyg.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/bootstrap-wysiwyg-custom.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/moment.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/bootstrap-colorpicker.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/daterangepicker.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/bootstrap-datepicker.js') }}"></script>
+  <!-- ck editor -->
+  <script type="text/javascript" src="{{ url_for('static',filename='assets/ckeditor/ckeditor.js') }}"></script>
+  <!-- custom form component script for this page-->
+  <script src="{{ url_for('static',filename='js/form-component.js') }}"></script>
+  <!-- custome script for all page -->
+  <script src="{{ url_for('static',filename='js/scripts.js') }}"></script>
+
+
+
+</body>
+
+</html>
