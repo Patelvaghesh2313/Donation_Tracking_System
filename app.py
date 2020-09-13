@@ -12,14 +12,14 @@ db.init_app(app)
 
 
 
-
-
-
 @app.route('/')
 def index():
     return render_template("layout0.html")
 
 
+@app.route('/dashboard')
+def dashboard():
+    return render_template("layout01.html")
 # ----------LOGIN------------#
 
 
