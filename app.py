@@ -11,12 +11,12 @@ db.init_app(app)
 
 @app.route('/')
 def index():
-    return render_template("layout0.html")
+    return render_template("index.html")
 
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template("layout01.html",user=session['user'])
+    return render_template("dashboard.html",user=session['user'])
 
 
 # ----------LOGIN------------#
@@ -39,7 +39,7 @@ def login():
                 session['user'] = username
                 return redirect(url_for('dashboard'))
             return redirect(url_for('login'))
-        return render_template("error.html")
+    return render_template("error.html")
 
 
 # ----------SIGIN-IN------------#
@@ -52,7 +52,9 @@ def sign_in():
     else:
         fullname = request.form.get("fullname")
         address = request.form.get("address")
+        city = request.form.get("city")
         email = request.form.get("email")
+        phone = request.form.get("phone")
         password = request.form.get("password")
         confirm_password = request.form.get("confirm_password")
         secure_password = sha256_crypt.encrypt(str(password))
@@ -62,7 +64,7 @@ def sign_in():
                 return redirect(url_for('sign_in'))
         else:
             if password == confirm_password:
-                user = User(fullname=fullname, address=address, email=email, password=secure_password)
+                user = User(fullname=fullname, address=address, city=city, email=email, phone=phone, password=secure_password)
                 db.session.add(user)
                 db.session.commit()
                 return redirect(url_for('login'))
@@ -92,11 +94,10 @@ def contact_us():
     return render_template("error.html")
 
 
-
 @app.route('/logout')
 def logout():
     session.pop('user',None)
-    return render_template("layout0.html")
+    return render_template("index.html")
 
 
 # ----------ADMIN-PART------------#
@@ -105,15 +106,72 @@ def logout():
 @app.route('/admin')
 def admin():
     if session['user'] == 'admin':
-        return render_template("admin_layout.html", user=session['user'])
+        return render_template("admin_dashboard.html", user=session['user'])
     return render_template("error.html")
 
 
 @app.route('/user_details')
 def user_details():
     if session['user'] == 'admin':
-        return render_template("admin_user_details.html")
+        all_user = User.query.all()
+        return render_template("admin_user_details.html",users=all_user)
     return render_template("error.html")
+
+
+@app.route('/user_details/add_user', methods=['POST'])
+def add_user():
+    if session['user'] == 'admin':
+        fullname = request.form.get("fullname")
+        address = request.form.get("address")
+        city = request.form.get("city")
+        email = request.form.get("email")
+        phone = request.form.get("phone")
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+        secure_password = sha256_crypt.encrypt(str(password))
+        register_user = User.query.filter_by(email=email).first()
+        if register_user:
+            if register_user.email == email:
+                return "User Already Exist"
+        else:
+            if password == confirm_password:
+                user = User(fullname=fullname, address=address, city=city, email=email, phone=phone,
+                            password=secure_password)
+                db.session.add(user)
+                db.session.commit()
+                flash("User Inserted Successfully","success")
+                return redirect(url_for('user_details'))
+            else:
+                flash("Password Does Not Match","danger")
+                return redirect(url_for('user_details'))
+    else:
+        return render_template("error.html")
+
+
+@app.route('/user_details/update',methods=['POST'])
+def update_user():
+    if session['user'] == 'admin':
+        if request.method == 'POST':
+            my_data = User.query.get(request.form.get('id'))
+            my_data.fullname = request.form['fullname']
+            my_data.address = request.form['address']
+            my_data.city = request.form['city']
+            my_data.email = request.form['email']
+            my_data.phone = request.form['phone']
+            db.session.commit()
+            flash("User Updated Successfully")
+            return redirect(url_for('user_details'))
+    else:
+        return render_template("error.html")
+
+
+@app.route('/delete/<id>', methods=['GET', 'POST'])
+def delete(id):
+    my_data = User.query.get(id)
+    db.session.delete(my_data)
+    db.session.commit()
+    flash("User Deleted Successfully")
+    return redirect(url_for('user_details'))
 
 
 @app.before_request
