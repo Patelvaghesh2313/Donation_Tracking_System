@@ -1,14 +1,19 @@
-from flask import render_template, request, redirect, url_for, flash, g, session
+from flask import render_template, request, redirect, url_for, flash, g, session, current_app
 from passlib.hash import sha256_crypt
 from models import *
+import os
+import secrets
 
 app = Flask(__name__)
 app.secret_key = 'charitySystem'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:2313@localhost/CharitySystem'
+picsFolder = os.path.join('static','pics')
+app.config['UPLOAD_FOLDER'] = picsFolder
 db.init_app(app)
 
 
+######################## HERE WE MAKE THE ROUTE OF ALL URLS#############
 @app.route('/')
 def index():
     return render_template("index.html")
@@ -16,10 +21,10 @@ def index():
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template("dashboard.html",user=session['user'])
+    return render_template("dashboard.html", user=session['user'])
 
 
-# ----------LOGIN------------#
+############################  LOGIN MODULE   #########################
 
 
 @app.route('/login', methods=["GET", "POST"])
@@ -34,15 +39,20 @@ def login():
         if username == 'admin' and password == 'admin@123':
             session['user'] = 'admin'
             return redirect(url_for('admin'))
+        elif myUser == None:
+            flash("User Does Not Exist ",'danger')
+            return redirect(url_for('login'))
         else:
             if sha256_crypt.verify(password, myUser.password):
                 session['user'] = username
                 return redirect(url_for('dashboard'))
-            return redirect(url_for('login'))
+            else:
+                flash("Incorrect Username And Password !",'danger')
+                return redirect(url_for('login'))
     return render_template("error.html")
+############################  END OF LOGIN MODULE  #########################
 
-
-# ----------SIGIN-IN------------#
+############################  SIGN-UP MODULE  #########################
 
 
 @app.route('/sign_in', methods=['GET', 'POST'])
@@ -64,19 +74,23 @@ def sign_in():
                 return redirect(url_for('sign_in'))
         else:
             if password == confirm_password:
-                user = User(fullname=fullname, address=address, city=city, email=email, phone=phone, password=secure_password)
+                user = User(fullname=fullname, address=address, city=city, email=email, phone=phone,
+                            password=secure_password)
                 db.session.add(user)
                 db.session.commit()
                 return redirect(url_for('login'))
             else:
-                flash("Password does not match", "danger")
+                flash("Password does not match", 'danger')
                 return redirect(url_for('sign_in'))
 
+############################  END OF SIGN-UP MODULE #########################
 
-@app.route('/charity_details')
-def charity_details():
+
+@app.route('/charity_Details')
+def charity_Details():
     if g.user:
-        return render_template("charity_details.html")
+        data = Charity.query.all()
+        return render_template("charity_details.html",charities = data)
     return render_template("error.html")
 
 
@@ -96,11 +110,11 @@ def contact_us():
 
 @app.route('/logout')
 def logout():
-    session.pop('user',None)
+    session.pop('user', None)
     return render_template("index.html")
 
 
-# ----------ADMIN-PART------------#
+############################ ADMIN-PART #############################
 
 
 @app.route('/admin')
@@ -109,12 +123,14 @@ def admin():
         return render_template("admin_dashboard.html", user=session['user'])
     return render_template("error.html")
 
+############################ USER DETAILS PART #############################
+
 
 @app.route('/user_details')
 def user_details():
     if session['user'] == 'admin':
         all_user = User.query.all()
-        return render_template("admin_user_details.html",users=all_user)
+        return render_template("admin_user_details.html", users=all_user)
     return render_template("error.html")
 
 
@@ -132,23 +148,24 @@ def add_user():
         register_user = User.query.filter_by(email=email).first()
         if register_user:
             if register_user.email == email:
-                return "User Already Exist"
+                flash("User Already Exist", 'danger')
+                return redirect(url_for('user_details'))
         else:
             if password == confirm_password:
                 user = User(fullname=fullname, address=address, city=city, email=email, phone=phone,
                             password=secure_password)
                 db.session.add(user)
                 db.session.commit()
-                flash("User Inserted Successfully","success")
+                flash("User Inserted Successfully",'success')
                 return redirect(url_for('user_details'))
             else:
-                flash("Password Does Not Match","danger")
+                flash("Password Does Not Match", 'danger')
                 return redirect(url_for('user_details'))
     else:
         return render_template("error.html")
 
 
-@app.route('/user_details/update',methods=['POST'])
+@app.route('/user_details/update_user', methods=['POST'])
 def update_user():
     if session['user'] == 'admin':
         if request.method == 'POST':
@@ -158,20 +175,73 @@ def update_user():
             my_data.city = request.form['city']
             my_data.email = request.form['email']
             my_data.phone = request.form['phone']
+            updatedPassword = request.form['password']
+            my_data.password = sha256_crypt.encrypt(str(updatedPassword))
             db.session.commit()
-            flash("User Updated Successfully")
+            flash("User Updated Successfully",'success')
             return redirect(url_for('user_details'))
     else:
         return render_template("error.html")
 
 
-@app.route('/delete/<id>', methods=['GET', 'POST'])
-def delete(id):
+@app.route('/delete_user/<id>', methods=['GET', 'POST'])
+def delete_user(id):
     my_data = User.query.get(id)
     db.session.delete(my_data)
     db.session.commit()
     flash("User Deleted Successfully")
     return redirect(url_for('user_details'))
+############################ END OF USER DETAILS PART #############################
+
+#############SAVE THE IMAGE HERE WE MAKE ONE FUNCTION###################
+
+
+def save_images(image):
+    hash_photo = secrets.token_urlsafe(10)
+    _, file_extension = os.path.splitext(image.filename)
+    photo_name = hash_photo + file_extension
+    file_path = os.path.join(current_app.root_path, 'static/pics', photo_name)
+    image.save(file_path)
+    return photo_name
+
+
+########################END OF SAVE IMAGE FUNCTION######################
+
+############################ CHARITY DETAILS PART #############################
+
+@app.route('/charity_details')
+def charity_details():
+    if session['user'] == 'admin':
+        all_charity = Charity.query.all()
+        return render_template("admin_charity_details.html",charities = all_charity)
+    return render_template("error.html")
+
+
+@app.route('/charity_details/add_charity', methods=['POST'])
+def add_charity():
+    if session['user'] == 'admin':
+        title = request.form.get('title')
+        content = request.form.get('content')
+        image = save_images(request.files.get('image'))
+        pub_date = request.form.get('pub_date')
+
+        addCharity = Charity(title=title,content=content,image=image,pub_time=pub_date)
+        db.session.add(addCharity)
+        db.session.commit()
+        flash("Charity Added Successfully",'success')
+        return redirect(url_for('charity_details'))
+    return render_template("error.html")
+
+
+@app.route('/delete_charity/<id>', methods=['GET', 'POST'])
+def delete_charity(id):
+    my_data = Charity.query.get(id)
+    db.session.delete(my_data)
+    db.session.commit()
+    flash("Charity Deleted Successfully",'success')
+    return redirect(url_for('charity_details'))
+
+############################ END OF CHARITY DETAILS PART #############################
 
 
 @app.before_request
@@ -179,6 +249,8 @@ def before_request():
     g.user = None
     if 'user' in session:
         g.user = session['user']
+
+#################### END OF ADMIN PART ########################
 
 
 if __name__ == '__main__':
