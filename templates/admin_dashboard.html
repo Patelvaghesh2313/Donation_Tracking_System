@@ -1,5 +1,105 @@
 {% extends 'admin_layout.html' %}
 {% block admin_title %}Admin Dashboard{% endblock %}
+{% block page_header %}Dashboard{% endblock %}
+{% block page_define %}
+            <ol class="breadcrumb">
+              <li><i class="fa fa-home"></i><a href="{{ url_for('user_details') }}">Home</a></li>
+            </ol>
+{% endblock %}
 {% block admin_content %}
+<div class="row">
+          <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+            <div class="info-box orange-bg">
+              <i class="fa fa-users"></i>
+              <div class="count">{{ total_users }}</div>
+              <div class="title">Total <Users></Users></div>
+            </div>
+            <!--/.info-box-->
+          </div>
+
+        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+            <div class="info-box linkedin-bg">
+              <i class="fa fa-clipboard"></i>
+              <div class="count">0</div>
+              <div class="title">Total Posts</div>
+            </div>
+            <!--/.info-box-->
+          </div>
+        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+            <div class="info-box lime-bg">
+              <i class="fa fa-users"></i>
+              <div class="count">0</div>
+              <div class="title">Active Users</div>
+            </div>
+            <!--/.info-box-->
+          </div>
+
+        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+            <div class="info-box brown-bg">
+              <i class="fa fa-send"></i>
+              <div class="count">0</div>
+              <div class="title">Total Transactions</div>
+            </div>
+            <!--/.info-box-->
+          </div>
+</div>
+
+    <div class="row">
+            <div class="col-md-4 portlets">
+            <!-- Widget -->
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <div class="pull-left">Message</div>
+                <div class="widget-icons pull-right">
+                  <a href="#" class="wminimize"><i class="fa fa-chevron-up"></i></a>
+                  <a href="#" class="wclose"><i class="fa fa-times"></i></a>
+                </div>
+                <div class="clearfix"></div>
+              </div>
+
+              <div class="panel-body">
+                <!-- Widget content -->
+                <div class="padd sscroll">
+
+                  <ul class="chats">
+
+                    <!-- Chat by us. Use the class "by-me". -->
+                    <li class="by-me">
+                      <!-- Use the class "pull-left" in avatar -->
+                      <div class="avatar pull-left">
+                        <img src="img/user.jpg" alt="" />
+                      </div>
+
+                      <div class="chat-content">
+                        <!-- In meta area, first include "name" and then "time" -->
+                        <div class="chat-meta">John Smith <span class="pull-right">3 hours ago</span></div>
+                        Vivamus diam elit diam, consectetur dapibus adipiscing elit.
+                        <div class="clearfix"></div>
+                      </div>
+                    </li>
+
+                    <!-- Chat by other. Use the class "by-other".-->
+
+                  </ul>
+
+                </div>
+                <!-- Widget footer -->
+                <div class="widget-foot">
+
+                  <form class="form-inline">
+                    <div class="form-group">
+                      <input type="text" class="form-control" placeholder="Type your message here...">
+                    </div>
+                    <button type="submit" class="btn btn-info">Send</button>
+                  </form>
+
+
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+</div>
 
 {% endblock %}
