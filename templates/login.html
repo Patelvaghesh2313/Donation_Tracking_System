@@ -5,9 +5,21 @@
 {% endblock %}
 
 {% block content %}
-    <div class="login-img3-body">
     <div class="container">
     <form class="login-form" method="POST" action="{{ url_for('login') }}">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="panel-body">
+                        <div class="alert alert-danger alert-dismissable fade in" role="alert">
+                             <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                              <strong>{{ message }}</strong>
+                        </div>
+                    </div>
+
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
       <div class="login-wrap">
         <p class="login-img"><i class="icon_lock_alt"></i></p>
         <div class="input-group">
