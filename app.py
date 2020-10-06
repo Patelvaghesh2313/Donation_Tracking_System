@@ -1,6 +1,7 @@
 from flask import render_template, request, redirect, url_for, flash, g, session, current_app
 from passlib.hash import sha256_crypt
 from models import *
+from web3 import Web3
 import os
 import secrets
 
@@ -30,6 +31,7 @@ def dashboard():
 @app.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == "GET":
+        session.pop('user', None)
         return render_template("login.html")
     else:
         session.pop('user', None)
@@ -58,6 +60,7 @@ def login():
 @app.route('/sign_in', methods=['GET', 'POST'])
 def sign_in():
     if request.method == "GET":
+        session.pop('user', None)
         return render_template("sign_in.html")
     else:
         fullname = request.form.get("fullname")
@@ -120,7 +123,7 @@ def logout():
 @app.route('/admin')
 def admin():
     if session['user'] == 'admin':
-        return render_template("admin_dashboard.html", user=session['user'])
+        return render_template("admin_dashboard.html", user=session['user'],total_users=3)
     return render_template("error.html")
 
 ############################ USER DETAILS PART #############################
